@@ -26,18 +26,14 @@ contract MultiTransfer is Ownable, IMultiTransfer {
         address[] calldata addresses_
     ) external payable onlyOwner returns (uint256[] memory success) {
         uint256 length = addresses_.length;
-        uint256 balance = address(this).balance;
-        uint256 totalAmount = msg.value * length;
-        
-        if (totalAmount > balance) 
-            revert MultiTransfer_InsufficientBalance();
+        uint256 amount = msg.value / length;
 
         success = new uint256[](length);
         address account;
         bool ok;
         for (uint256 i; i < length; ) {
             account = addresses_[i];
-            (ok, ) = account.call{value: msg.value}("");
+            (ok, ) = account.call{value: amount}("");
             success[i] = ok ? 2 : 1;
 
             unchecked {

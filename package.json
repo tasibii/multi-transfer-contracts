@@ -1,0 +1,42 @@
+{
+  "name": "multi-transfer-contracts",
+  "version": "1.0.0",
+  "description": "Multi token transfer for set up address",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tasiby/multi-transfer-contracts.git"
+  },
+  "keywords": [
+    "multi-transfer"
+  ],
+  "author": "tasiby",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tasiby/multi-transfer-contracts/issues"
+  },
+  "homepage": "https://github.com/tasiby/multi-transfer-contracts#readme",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.1",
+    "@nomicfoundation/hardhat-ethers": "^3.0.2",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.8",
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "@nomicfoundation/hardhat-verify": "^1.0.1",
+    "@typechain/ethers-v6": "^0.4.0",
+    "@typechain/hardhat": "^8.0.0",
+    "@types/chai": "^4.3.5",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.2.5",
+    "chai": "^4.3.7",
+    "ethers": "^6.5.1",
+    "hardhat": "^2.15.0",
+    "hardhat-gas-reporter": "^1.0.9",
+    "solidity-coverage": "^0.8.2",
+    "ts-node": "^10.9.1",
+    "typechain": "^8.2.0",
+    "typescript": "^5.1.3"
+  }
+}

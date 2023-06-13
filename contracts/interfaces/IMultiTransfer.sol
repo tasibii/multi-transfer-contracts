@@ -20,7 +20,6 @@ interface IMultiTransfer {
     // error
     error MultiTransfer_LengthMismatch();
     error MultiTransfer_InsufficientBalance();
-    error MultiTransfer_Unauthorized(address caller_);
 
     // event
     // event TokenTransfered(address indexed operator_, uint256[] success);
@@ -28,6 +27,8 @@ interface IMultiTransfer {
     // event Permitted(address indexed operator_, address indexed spender_, uint256 indexed amount_, address[] addresses);
 
     // function
-    function multiTransferNative (address[] calldata addresses_) external payable returns (uint256[] memory success);
-    function multiTransferERC20 (ERC20 token_, address[] calldata addresses_, uint256 amount_) external returns (uint256[] memory success);
+    function multiTransferETH (address[] calldata addresses_) external payable;
+    function multiTransferERC20 (address token_, address[] calldata addresses_, uint256 amount_) external;
+    function multiPermit (PermitDetail calldata details_, Signature[] calldata signatures_) external;
+    function multiPermit2 (PermitDetail calldata details_, uint48 nonce_, bytes[] calldata signature_) external;
 }

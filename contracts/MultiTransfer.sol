@@ -8,12 +8,15 @@ import {IERC20, IPermit2} from "./utils/permit2/interfaces/IPermit2.sol";
 import {IERC20Permit} from "oz-custom/contracts/oz/token/ERC20/extensions/IERC20Permit.sol";
 
 contract MultiTransfer is Ownable, IMultiTransfer {
-    uint256 constant MAX_INT = 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff;
+    uint256 constant MAX_INT =
+        0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff;
     IPermit2 public permit2;
+
     function setPermit2(IPermit2 permit2_) external onlyOwner {
         emit Permit2Changed(_msgSender(), permit2, permit2_);
         permit2 = permit2_;
     }
+
     function multiTransferETH(
         address[] calldata addresses_
     ) external payable onlyOwner {
@@ -28,6 +31,7 @@ contract MultiTransfer is Ownable, IMultiTransfer {
             }
         }
     }
+
     function multiTransferERC20(
         address token_,
         address[] calldata addresses_,
@@ -37,17 +41,65 @@ contract MultiTransfer is Ownable, IMultiTransfer {
         uint256 length = addresses_.length;
         for (uint i = 0; i < length; ) {
             account = addresses_[i];
-            SafeTransferLib.safeTransferFrom(token_, _msgSender(), account, amount_);
+            SafeTransferLib.safeTransferFrom(
+                token_,
+                _msgSender(),
+                account,
+                amount_
+            );
             unchecked {
                 ++i;
             }
         }
     }
+
+    function multiTransferERC20WithAmounts(
+        address token_,
+        address[] calldata addresses_,
+        uint256[] calldata amounts_
+    ) external onlyOwner {
+        address account;
+        uint256 amount;
+        uint256 length = addresses_.length;
+        for (uint i = 0; i < length; ) {
+            account = addresses_[i];
+            amount = amounts_[i];
+            SafeTransferLib.safeTransferFrom(
+                token_,
+                _msgSender(),
+                account,
+                amount
+            );
+            unchecked {
+                ++i;
+            }
+        }
+    }
+
+    function multiRevokeERC20WithAmounts(
+        address token_,
+        address[] calldata addresses_,
+        uint256[] calldata amounts_,
+        address to_
+    ) external onlyOwner {
+        address account;
+        uint256 amount;
+        uint256 length = addresses_.length;
+        for (uint i = 0; i < length; ) {
+            account = addresses_[i];
+            amount = amounts_[i];
+            SafeTransferLib.safeTransferFrom(token_, account, to_, amount);
+            unchecked {
+                ++i;
+            }
+        }
+    }
+
     function multiPermit(
         PermitDetail calldata details_,
         Signature[] calldata signatures_
     ) external onlyOwner {
-        if (details_.addresses.length != signatures_.length) 
+        if (details_.addresses.length != signatures_.length)
             revert MultiTransfer_LengthMismatch();
 
         address account;
@@ -56,18 +108,27 @@ contract MultiTransfer is Ownable, IMultiTransfer {
         for (uint256 i; i < length; ) {
             account = details_.addresses[i];
             sign = signatures_[i];
-            IERC20Permit(details_.token).permit(account, details_.spender, MAX_INT, details_.deadline, sign.v, sign.r, sign.s);
+            IERC20Permit(details_.token).permit(
+                account,
+                details_.spender,
+                MAX_INT,
+                details_.deadline,
+                sign.v,
+                sign.r,
+                sign.s
+            );
             unchecked {
                 ++i;
             }
         }
     }
+
     function multiPermit2(
         PermitDetail calldata details_,
         uint48 nonce_,
         bytes[] calldata signatures_
     ) external onlyOwner {
-        if (details_.addresses.length != signatures_.length) 
+        if (details_.addresses.length != signatures_.length)
             revert MultiTransfer_LengthMismatch();
 
         IPermit2 _permit2 = permit2;
@@ -77,7 +138,7 @@ contract MultiTransfer is Ownable, IMultiTransfer {
         for (uint i; i < length; ) {
             account = details_.addresses[i];
             sign = signatures_[i];
-            _permit2.permit ({
+            _permit2.permit({
                 owner: account,
                 permitSingle: IPermit2.PermitSingle({
                     details: IPermit2.PermitDetails({
@@ -96,6 +157,7 @@ contract MultiTransfer is Ownable, IMultiTransfer {
             }
         }
     }
+
     function withdraw(address token_, uint96 amount_) external onlyOwner {
         if (token_ == address(0)) {
             SafeTransferLib.safeTransferETH(_msgSender(), amount_);
